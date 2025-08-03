@@ -1,0 +1,56 @@
+Modeling Strategies for a Cyber-Physical Sleep System
+
+A Simulation-Based Approach
+
+
+Overall Strategy: Model-Based Design (MBD)
+
+  A method of using a graphical environment (like Simulink) to design, simulate, and verify a system before implementation.
+  Core Principle: We model the "Cyber" part (the control logic) and the "Physical"part (the environment) separately and then simulate their interaction.
+  Why it's perfect for this project:
+      1 Allows us to safely test and refine the control logic.
+      2 Creates a complete, end-to-end simulation of the system's behavior.
+
+
+
+ Strategy 1 - The Controller: A Refined Finite State Machine (FSM)
+  The Stateflow chart we've already created.
+  Goal: Model the system's brain—its decision-making logic.
+  Actionable Strategy:
+      Structure the FSM around "actual sleep stages" to make the logic intuitive.
+       Example States: `Idle`, `Drowsy`, `LightSleep`, `DeepSleep`, `WakeUp`.
+      Handle disruptions like high stress or temperature as "temporary sub-states" or triggered actions (e.g., a `Discomfort_Management` state).
+  Benefit: This creates a clear and verifiable model that directly relates to the goal of improving sleep quality. 
+
+
+ Strategy 2 - The Environment: Plant Modeling
+
+   Simulate the "physical world" that the controller interacts with.
+   Actionable Strategy:
+      Create a simple "Room Thermal Model" to simulate how the AC affects room temperature.
+      Implementation: Use a "Transfer Fcn" block in Simulink. This block can model the time delay and gradual temperature change.
+      Connect it: The `AC_Control` output from your Stateflow chart becomes the input to this plant model. The plant model's output becomes the `Ambient_Temperature` input for your controller.
+  Benefit: Creates a "closed-loop simulation"where you can see the real effect of your controller's actions. 
+
+
+ Strategy 3 (Advanced) - Data-Driven Logic"
+
+  Make the control logic more flexible and intelligent than simple `if-then` rules.
+  Actionable Strategy:
+      Use "Lookup Table"blocks in Simulink.
+       A lookup table can map a combination of inputs (e.g., `Body_Temperature` and `Stress_Level`) to a desired output (`AC_Control`).
+  Benefit: The control "rules" are now data in a table, not hard-coded logic. This makes it easy to test different control strategies or update the system based on sleep science without redesigning the Stateflow chart. 
+
+
+
+Verification & Results: Visualization is Key
+
+  Prove that system works as intended.
+  Actionable Strategy:
+       Use Simulink 'Scope' blocks to plot all important signals on a single graph over time.
+      Essential Signals to Plot:
+        1.  'Inputs' (`Body_Temp`, `Stress_Level`)
+        2.  'Control Action' (`AC_Control` signal)
+        3.  'System Response' (The simulated `Ambient_Temperature` from your plant model)
+        4.  'Active State' (The current state of your FSM)
+ Benefit: A single, comprehensive graph provides clear, visual evidence of your system's performance, telling the complete story from problem to solution. 
